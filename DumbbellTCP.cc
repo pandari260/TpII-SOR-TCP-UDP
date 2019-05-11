@@ -134,7 +134,7 @@ int main (int argc, char *argv[]){
 
   Simulator::Run ();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
-  std::cout << "RTT: " << tshark -r dumbbellPCAP/dumbbellR.pcap -Y 'ip.addr == AA.BB.CC.DD' -T fields -e tcp.analysis.ack_rtt
+  //std::cout << "RTT: " << tshark -r dumbbellPCAP/dumbbellR.pcap -Y 'ip.addr == AA.BB.CC.DD' -T fields -e tcp.analysis.ack_rtt
   Simulator::Destroy ();
   return 0;
 
