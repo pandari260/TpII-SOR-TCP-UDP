@@ -41,7 +41,7 @@ int main (int argc, char *argv[]){
     // Crear helpers 
     PointToPointHelper p2pRouter;
     p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("10Mbps"));
-    p2pRouter.SetChannelAttribute ("Delay", StringValue ("10ms"));
+    p2pRouter.SetChannelAttribute ("Delay", StringValue ("50ms"));
 
     PointToPointHelper p2pEmisor;
     p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
@@ -120,8 +120,8 @@ int main (int argc, char *argv[]){
 
 
   AsciiTraceHelper ascii;
-  p2pReceptor.EnableAsciiAll (ascii.CreateFileStream ("dumbbellPCAP/dumbellR.tr"));
-  p2pReceptor.EnablePcapAll ("dumbbellPCAP/dumbellR");
+  p2pRouter.EnableAsciiAll (ascii.CreateFileStream ("dumbbellPCAP/dumbellR.tr"));
+  p2pRouter.EnablePcapAll ("dumbbellPCAP/dumbellR");
 
 
     redDumbbell.BoundingBox (1, 1, 100, 100);
