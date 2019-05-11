@@ -41,7 +41,7 @@ int main (int argc, char *argv[]){
     // Crear helpers 
     PointToPointHelper p2pRouter;
     p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("10Mbps"));
-    p2pRouter.SetChannelAttribute ("Delay", StringValue ("50ms"));
+    p2pRouter.SetChannelAttribute ("Delay", StringValue ("100ms"));
 
     PointToPointHelper p2pEmisor;
     p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
