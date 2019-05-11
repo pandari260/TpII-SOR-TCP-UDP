@@ -41,14 +41,15 @@ int main (int argc, char *argv[]){
     // Crear helpers 
     PointToPointHelper p2pRouter;
     p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("10Mbps"));
-    p2pRouter.SetChannelAttribute ("Delay", StringValue ("100ms"));
+    p2pRouter.SetChannelAttribute ("Delay", StringValue ("1000ms"));
+    p2pRouter.SetQueue ("ns3::DropTailQueue", "MaxSize", StringValue ("3p"));
 
     PointToPointHelper p2pEmisor;
-    p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
+    p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("10Mbps"));
     p2pEmisor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
     PointToPointHelper p2pReceptor;
-    p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
+    p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("5Mbps"));
     p2pReceptor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
     PointToPointDumbbellHelper redDumbbell (3, p2pEmisor,3, p2pReceptor,p2pRouter);
@@ -104,15 +105,15 @@ int main (int argc, char *argv[]){
   // Create an on/off app sending packets to the same leaf right side
       AddressValue remoteAddress0 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (0), puerto));
       emisorHelper.SetAttribute ("Remote", remoteAddress0);
-      appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (0)));
+      //appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (0)));
 
       AddressValue remoteAddress1 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (1), puerto));
       emisorHelper.SetAttribute ("Remote", remoteAddress1);
-      appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (1)));
+     // appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (1)));
 
       AddressValue remoteAddress2 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (2), puerto));
       emisorHelperUdp.SetAttribute ("Remote", remoteAddress2);
-     // appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
+      appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
 
       appEmisor.Start(Seconds(0.0));
       appEmisor.Stop(Seconds(1.0));
