@@ -41,14 +41,14 @@ int main (int argc, char *argv[]){
     // Crear helpers 
     PointToPointHelper p2pRouter;
     p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("10Mbps"));
-    p2pRouter.SetChannelAttribute ("Delay", StringValue ("1ms"));
+    p2pRouter.SetChannelAttribute ("Delay", StringValue ("10ms"));
 
     PointToPointHelper p2pEmisor;
-    p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("10Mbps"));
+    p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
     p2pEmisor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
     PointToPointHelper p2pReceptor;
-    p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("5Mbps"));
+    p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("1Gbps"));
     p2pReceptor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
     PointToPointDumbbellHelper redDumbbell (3, p2pEmisor,3, p2pReceptor,p2pRouter);
@@ -73,7 +73,7 @@ int main (int argc, char *argv[]){
 
   ApplicationContainer appsReceptor;
   appsReceptor.Add(sink.Install(redDumbbell.GetLeft(0)));
-  //appsReceptor.Add(sink.Install(redDumbbell.GetLeft(1))); 
+  appsReceptor.Add(sink.Install(redDumbbell.GetLeft(1))); 
   appsReceptor.Start (Seconds (0.0));
   appsReceptor.Stop (Seconds (1.0));
 
@@ -108,7 +108,7 @@ int main (int argc, char *argv[]){
 
       AddressValue remoteAddress1 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (1), puerto));
       emisorHelper.SetAttribute ("Remote", remoteAddress1);
-      //appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (1)));
+      appEmisor.Add (emisorHelper.Install (redDumbbell.GetRight (1)));
 
       AddressValue remoteAddress2 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (2), puerto));
       emisorHelperUdp.SetAttribute ("Remote", remoteAddress2);
