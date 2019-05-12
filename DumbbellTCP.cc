@@ -25,8 +25,8 @@ int main (int argc, char *argv[]){
 
   // Crear helpers 
   PointToPointHelper p2pRouter;
-  p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("10Mbps"));
-  p2pRouter.SetChannelAttribute ("Delay", StringValue ("100ms"));
+  p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("1Kbps"));
+  p2pRouter.SetChannelAttribute ("Delay", StringValue ("10ms"));
   p2pRouter.SetQueue ("ns3::DropTailQueue", "MaxSize", StringValue ("1p"));
 
   PointToPointHelper p2pEmisor;
@@ -94,7 +94,7 @@ int main (int argc, char *argv[]){
 
   AddressValue remoteAddress2 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (2), puerto));
   emisorHelperUdp.SetAttribute ("Remote", remoteAddress2);
-  appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
+ // appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
 
   appEmisor.Start(Seconds(0.0));
   appEmisor.Stop(Seconds(1.0));
@@ -121,3 +121,4 @@ int main (int argc, char *argv[]){
   return 0;
 
 }
+
