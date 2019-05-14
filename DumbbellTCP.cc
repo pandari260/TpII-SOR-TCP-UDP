@@ -17,25 +17,25 @@ using namespace ns3;
 
 int main (int argc, char *argv[]){
 
-  Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (10));
-  Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("500kb/s"));
+  Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (512));
+  Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("100KB/s"));
 
   std::string animFile = "dumbbell-animation.xml" ;  // Name of file for animation output
  
 
   // Crear helpers 
   PointToPointHelper p2pRouter;
-  p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("1Kbps"));
-  p2pRouter.SetChannelAttribute ("Delay", StringValue ("10ms"));
-  p2pRouter.SetQueue ("ns3::DropTailQueue", "MaxSize", StringValue ("1p"));
+  p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("100KB/s"));
+  //p2pRouter.SetChannelAttribute ("Delay", StringValue ("10ms"));
+  //p2pRouter.SetQueue ("ns3::DropTailQueue", "MaxSize", StringValue ("1p"));
 
   PointToPointHelper p2pEmisor;
-  p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("10Mbps"));
-  p2pEmisor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
+  p2pEmisor.SetDeviceAttribute    ("DataRate", StringValue ("100KB/s"));
+ // p2pEmisor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
   PointToPointHelper p2pReceptor;
-  p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("5Mbps"));
-  p2pReceptor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
+  p2pReceptor.SetDeviceAttribute    ("DataRate", StringValue ("100KB/s"));
+  //p2pReceptor.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
   PointToPointDumbbellHelper redDumbbell (3, p2pEmisor,3, p2pReceptor,p2pRouter);
 
@@ -61,20 +61,20 @@ int main (int argc, char *argv[]){
   appsReceptor.Add(sink.Install(redDumbbell.GetLeft(0)));
   appsReceptor.Add(sink.Install(redDumbbell.GetLeft(1))); 
   appsReceptor.Start (Seconds (0.0));
-  appsReceptor.Stop (Seconds (1.0));
+  appsReceptor.Stop (Seconds (10.0));
 
 
   PacketSinkHelper sinkUdp ("ns3::UdpSocketFactory",  InetSocketAddress (Ipv4Address::GetAny (), puerto));
   ApplicationContainer appsReceptorUdp = sinkUdp.Install(redDumbbell.GetLeft(2));
   appsReceptorUdp.Start (Seconds (0.0));
-  appsReceptorUdp.Stop (Seconds (1.0));
+  appsReceptorUdp.Stop (Seconds (10.0));
 
 
   //crear aplicaciones emisoras
   OnOffHelper emisorHelper ("ns3::TcpSocketFactory", Address ());
   emisorHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   emisorHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  emisorHelper.SetAttribute ("PacketSize", UintegerValue (2000));
+  //emisorHelper.SetAttribute ("PacketSize", UintegerValue (2000));
 
   OnOffHelper emisorHelperUdp ("ns3::UdpSocketFactory", Address ());
   emisorHelperUdp.SetAttribute ("OnTime", StringValue("ns3::ConstantRandomVariable[Constant=1]"));
@@ -97,9 +97,7 @@ int main (int argc, char *argv[]){
  // appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
 
   appEmisor.Start(Seconds(0.0));
-  appEmisor.Stop(Seconds(1.0));
-
-
+  appEmisor.Stop(Seconds(5.0));
 
   AsciiTraceHelper ascii;
   p2pRouter.EnableAsciiAll (ascii.CreateFileStream ("dumbbellPCAP/dumbellR.tr"));
@@ -117,8 +115,8 @@ int main (int argc, char *argv[]){
   Simulator::Run ();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   //std::cout << "RTT: " << tshark -r dumbbellPCAP/dumbbellR.pcap -Y 'ip.addr == AA.BB.CC.DD' -T fields -e tcp.analysis.ack_rtt
+  Simulator::Stop(Seconds(10.0));
   Simulator::Destroy ();
   return 0;
 
 }
-
