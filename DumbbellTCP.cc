@@ -28,10 +28,6 @@ int main (int argc, char *argv[]){
   Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("100KB/s"));
   Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (100));
   Config::SetDefault ("ns3::TcpSocket::DelAckCount", UintegerValue (0));
- 
- // Config::SetDefault ("ns3::TcpL4Protocol::SocketType", StringValue ("ns3::TcpReno"));
-  //Config::SetDefault ("ns3::RttEstimator::MinRTO", TimeValue (MilliSeconds (100)));
-
 
   std::string animFile = "dumbbell-animation.xml" ;  // Name of file for animation output
  
@@ -39,7 +35,6 @@ int main (int argc, char *argv[]){
   // Crear helpers 
   PointToPointHelper p2pRouter;
   p2pRouter.SetDeviceAttribute  ("DataRate", StringValue ("100KB/s"));
-  //p2pRouter.SetQueue ("ns3::DropTailQueue", "MaxSize", StringValue ("6p"));
   p2pRouter.SetChannelAttribute("Delay", StringValue("1ms"));
 
   PointToPointHelper p2pEmisor;
@@ -73,13 +68,13 @@ int main (int argc, char *argv[]){
   appsReceptor.Add(sink.Install(redDumbbell.GetLeft(0)));
   appsReceptor.Add(sink.Install(redDumbbell.GetLeft(1))); 
   appsReceptor.Start (Seconds (0.0));
-  appsReceptor.Stop (Seconds (20.0));
+  appsReceptor.Stop (Seconds (80.0));
 
 
   PacketSinkHelper sinkUdp ("ns3::UdpSocketFactory",  InetSocketAddress (Ipv4Address::GetAny (), puerto));
   ApplicationContainer appsReceptorUdp = sinkUdp.Install(redDumbbell.GetLeft(2));
   appsReceptorUdp.Start (Seconds (0.0));
-  appsReceptorUdp.Stop (Seconds (20.0));
+  appsReceptorUdp.Stop (Seconds (80.0));
 
   //crear aplicaciones emisoras
   OnOffHelper emisorHelper ("ns3::TcpSocketFactory", Address ());
@@ -87,8 +82,8 @@ int main (int argc, char *argv[]){
   emisorHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
   OnOffHelper emisorHelperUdp ("ns3::UdpSocketFactory", Address ());
-  //emisorHelperUdp.SetAttribute ("OnTime", StringValue("ns3::ConstantRandomVariable[Constant=1]"));
-  //emisorHelperUdp.SetAttribute ("OffTime", StringValue("ns3::ConstantRandomVariable[Constant=0]"));
+  emisorHelperUdp.SetAttribute ("OnTime", StringValue("ns3::ConstantRandomVariable[Constant=1]"));
+  emisorHelperUdp.SetAttribute ("OffTime", StringValue("ns3::ConstantRandomVariable[Constant=0]"));
 
  
   ApplicationContainer appEmisor;
@@ -105,10 +100,10 @@ int main (int argc, char *argv[]){
 
   AddressValue remoteAddress2 (InetSocketAddress (redDumbbell.GetLeftIpv4Address (2), puerto));
   emisorHelperUdp.SetAttribute ("Remote", remoteAddress2);
- // appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
+  //appEmisor.Add (emisorHelperUdp.Install (redDumbbell.GetRight (2)));
 
   appEmisor.Start(Seconds(0.0));
-  appEmisor.Stop(Seconds(15.0));
+  appEmisor.Stop(Seconds(75.0));
 
   AsciiTraceHelper ascii;
   p2pRouter.EnableAsciiAll (ascii.CreateFileStream ("dumbbellPCAP/dumbellR.tr"));
@@ -118,14 +113,13 @@ int main (int argc, char *argv[]){
   // Create the animation object and configure for specified output
   AnimationInterface anim (animFile);
   anim.EnablePacketMetadata (); // Optional
-  anim.EnableIpv4L3ProtocolCounters (Seconds (0), Seconds (20 )); // Optional
+  anim.EnableIpv4L3ProtocolCounters (Seconds (0), Seconds (80 )); // Optional
   // Set up the actual simulation
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
   Simulator::Run ();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
-  //std::cout << "RTT: " << tshark -r dumbbellPCAP/dumbbellR.pcap -Y 'ip.addr == AA.BB.CC.DD' -T fields -e tcp.analysis.ack_rtt
-  Simulator::Stop(Seconds(20.0));
+  Simulator::Stop(Seconds(80.0));
   Simulator::Destroy ();
   return 0;
 
